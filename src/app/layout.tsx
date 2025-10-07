@@ -1,4 +1,10 @@
+import type { Metadata } from 'next';
 import './globals.css';
+
+export const metadata: Metadata = {
+  title: 'CSV Converter - Transform Your CSV Files',
+  description: 'A powerful tool to convert, transform, and manipulate CSV files with ease.',
+};
 
 export default function RootLayout({
   children,
