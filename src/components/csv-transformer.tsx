@@ -29,7 +29,7 @@ import {
   Sparkles,
   Trash2,
 } from 'lucide-react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 
 type CaseConversion = 'none' | 'uppercase' | 'lowercase';
 type QuoteType = 'none' | 'double' | 'single';
@@ -55,6 +55,36 @@ export function CsvTransformer() {
   const [isLoading, setIsLoading] = useState(false);
   const [aiSuggested, setAiSuggested] = useState<Set<AiSuggestion>>(new Set());
   const [debouncedInput, setDebouncedInput] = useState(inputData);
+
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const isPasted = useRef(false);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        inputRef.current?.focus();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    inputRef.current?.focus(); // Focus on initial load
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  const handlePaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    isPasted.current = true;
+  };
+  
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(outputData);
+    toast({
+      title: 'Copied to Clipboard',
+      description: 'The output has been copied.',
+    });
+  }, [outputData, toast]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -123,6 +153,13 @@ export function CsvTransformer() {
     processData();
   }, [processData]);
 
+  useEffect(() => {
+    if (isPasted.current && outputData) {
+      handleCopy();
+      isPasted.current = false;
+    }
+  }, [outputData, handleCopy]);
+
   const handleDownload = () => {
     const blob = new Blob([outputData], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
@@ -134,14 +171,6 @@ export function CsvTransformer() {
     toast({
       title: 'Download Started',
       description: 'Your CSV file is being downloaded.',
-    });
-  };
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(outputData);
-    toast({
-      title: 'Copied to Clipboard',
-      description: 'The output has been copied.',
     });
   };
 
@@ -177,9 +206,14 @@ export function CsvTransformer() {
           </CardHeader>
           <CardContent>
             <Textarea
+              ref={inputRef}
               value={inputData}
               onChange={e => setInputData(e.target.value)}
-              placeholder="e.g.&#10;Apple&#10;Banana&#10;Orange"
+              onPaste={handlePaste}
+              placeholder="e.g.
+              Apple
+              Banana
+              Orange"
               className="min-h-[200px] font-mono"
             />
           </CardContent>
