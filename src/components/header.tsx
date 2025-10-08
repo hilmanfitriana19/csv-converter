@@ -6,7 +6,7 @@ export function Header() {
       <div className="flex items-center gap-3">
         <FileText className="h-7 w-7 text-primary" />
         <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
-          CSV Transformer
+          CSV Converter
         </h1>
       </div>
     </header>

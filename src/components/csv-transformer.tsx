@@ -211,9 +211,7 @@ export function CsvTransformer() {
               onChange={e => setInputData(e.target.value)}
               onPaste={handlePaste}
               placeholder="e.g.
-              Apple
-              Banana
-              Orange"
+              Apple"
               className="min-h-[200px] font-mono"
             />
           </CardContent>
