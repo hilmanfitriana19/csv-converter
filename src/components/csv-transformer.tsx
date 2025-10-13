@@ -48,7 +48,7 @@ export function CsvTransformer() {
   const [prefix, setPrefix] = useState('');
   const [suffix, setSuffix] = useState('');
   const [caseConversion, setCaseConversion] = useState<CaseConversion>('none');
-  const [quoteType, setQuoteType] = useState<QuoteType>('none');
+  const [quoteType, setQuoteType] = useState<QuoteType>('single');
   const [removeDuplicates, setRemoveDuplicates] = useState(false);
   const [removeLineBreaks, setRemoveLineBreaks] = useState(false);
 
